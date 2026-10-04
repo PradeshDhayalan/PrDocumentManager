@@ -1,0 +1,15 @@
+node_modules/
+**/generated/
+**/out/
+**/obj/
+**/bin/
+**/dist/
+**/data/
+mock-api/seed-files/*
+!mock-api/seed-files/.gitkeep
+coverage/
+playwright-report/
+test-results/
+*.log
+
+artifacts/

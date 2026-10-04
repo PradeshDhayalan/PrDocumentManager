@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <data name="control.name">
+    <value>DMS Grid</value>
+  </data>
+  <data name="control.description">
+    <value>Manage document files and metadata</value>
+  </data>
+  <data name="documents">
+    <value>Documents</value>
+  </data>
+  <data name="input.dragDrop">
+    <value>Enable drag and drop</value>
+  </data>
+  <data name="input.defaultView">
+    <value>Default view</value>
+  </data>
+  <data name="input.pageSize">
+    <value>Page size</value>
+  </data>
+  <data name="input.showTitle">
+    <value>Show title</value>
+  </data>
+  <data name="input.showDetails">
+    <value>Show details pane</value>
+  </data>
+  <data name="input.telemetry">
+    <value>Enable telemetry</value>
+  </data>
+  <data name="view.list">
+    <value>List</value>
+  </data>
+  <data name="view.tiles">
+    <value>Tiles</value>
+  </data>
+  <data name="empty.title">
+    <value>No documents yet</value>
+  </data>
+  <data name="empty.description">
+    <value>Documents associated with this record will appear here.</value>
+  </data>
+  <data name="unsaved.title">
+    <value>Save this record to manage documents.</value>
+  </data>
+  <data name="harness.title">
+    <value>DMS Grid test harness</value>
+  </data>
+  <data name="harness.theme">
+    <value>Theme</value>
+  </data>
+  <data name="harness.record">
+    <value>Record</value>
+  </data>
+  <data name="theme.blue">
+    <value>Blue</value>
+  </data>
+  <data name="theme.teal">
+    <value>Teal</value>
+  </data>
+  <data name="theme.dark">
+    <value>Dark</value>
+  </data>
+  <data name="theme.highContrast">
+    <value>High contrast</value>
+  </data>
+  <data name="harness.stage">
+    <value>Milestone M0 · Control scaffold</value>
+  </data>
+  <data name="record.contoso">
+    <value>Contoso Ltd</value>
+  </data>
+  <data name="record.unsaved">
+    <value>Unsaved record</value>
+  </data>
+</root>

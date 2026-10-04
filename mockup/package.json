@@ -1,0 +1,23 @@
+{
+  "name": "dms-grid-visual-prototype",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "capture": "node capture.mjs",
+    "check:review": "node review-checks.mjs"
+  },
+  "dependencies": {
+    "@fluentui/react-components": "9.46.2",
+    "@fluentui/react-icons": "2.0.308",
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
+  },
+  "devDependencies": {
+    "vite": "6.4.1",
+    "@playwright/test": "1.56.1"
+  }
+}

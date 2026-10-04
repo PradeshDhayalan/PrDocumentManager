@@ -1,0 +1,15 @@
+# Decisions
+- Preserve `mockup/` as the approved visual review; implementation lives in `control/`, `harness/`, and `mock-api/`.
+- Use the official PAC dataset/React virtual template; keep the control folder at `control/DmsGrid/` and project files at `control/`.
+- Keep React 16.14.0 and Fluent 9.46.2 consistent between manifest and harness; official current PAC template proposes Fluent 9.68.0, but Microsoft Learn and target-org verification remain unavailable (S8).
+- Use Vite same-origin proxy for API calls; the mock also permits CORS for debugging.
+- Use Fluent v9 Toolbar/ToolbarButton and Overflow for command bars; Fluent v8 CommandBar is excluded.
+- Show thumbnails, Personas in list and tiles, and Fluent shadow tokens on cards, as explicitly requested after the brief.
+- Live Graph authentication remains deferred; profile photos are separate from document providers.
+- Server-side compensation will remove owned annotation binaries; the client will never delete annotations directly.
+- External SharePoint navigation is allowed; embedded previews are optional and disabled until S2 is validated.
+- Pin one React 16.14 instance and Griffel 1.5.32 workspace-wide: prevents duplicate React hooks and fully-specified ESM JSX-runtime resolution in PCF Webpack.
+- Generate all 14 listed fixture formats: Contoso therefore has 22 rows, rather than the approximate 18 in the brief.
+- Use installed ffmpeg/ffprobe for valid two-second MP4 fixtures; this avoids a second platform-binary dependency.
+- Advance mocked migration on polling over 15 seconds; the real migration engine stays out of scope.
+- Persist committed binaries/metadata, keep mock transfer tokens process-local; real token lifetime/resume stays S3.

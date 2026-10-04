@@ -1,0 +1,1 @@
+{"extends":"../tsconfig.json","compilerOptions":{"noEmit":false},"include":["DmsGrid/**/*.ts","DmsGrid/**/*.tsx"]}

@@ -1,0 +1,14 @@
+import { spawnSync } from 'node:child_process';
+import { existsSync, readFileSync, rmSync, statSync } from 'node:fs';
+import path from 'node:path';
+const bundle = path.resolve('control/out/controls/DmsGrid/bundle.js');
+rmSync(path.resolve('control/out'), { recursive: true, force: true });
+const result = spawnSync('npm', ['run', 'build:production', '--workspace', '@dms/control'], { encoding: 'utf8', env: process.env });
+process.stdout.write(result.stdout ?? '');
+process.stderr.write(result.stderr ?? '');
+if (result.status !== 0 || !existsSync(bundle) || /\[build\] Failed/.test(result.stdout ?? '')) process.exit(1);
+const bytes = statSync(bundle).size;
+if (bytes >= 500 * 1024) throw new Error(`PCF bundle exceeds 500 KiB: ${bytes} bytes`);
+const manifest = readFileSync('control/out/controls/DmsGrid/ControlManifest.xml', 'utf8');
+if (!manifest.includes('platform-library')) throw new Error('Missing platform library declaration');
+process.stdout.write(`Verified PCF bundle: ${bytes} bytes (platform React/Fluent).\n`);
