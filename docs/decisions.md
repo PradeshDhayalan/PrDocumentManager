@@ -13,3 +13,4 @@
 - Use installed ffmpeg/ffprobe for valid two-second MP4 fixtures; this avoids a second platform-binary dependency.
 - Advance mocked migration on polling over 15 seconds; the real migration engine stays out of scope.
 - Persist committed binaries/metadata, keep mock transfer tokens process-local; real token lifetime/resume stays S3.
+- Generate ignored PCF manifest types in the root postinstall hook: fresh clones must type-check before any PCF build.

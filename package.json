@@ -22,7 +22,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint control/DmsGrid harness/src mock-api/src mock-api/test e2e && prettier --check control/DmsGrid harness/src mock-api/src mock-api/test e2e",
     "format": "prettier --write control/DmsGrid harness/src mock-api/src mock-api/test e2e",
-    "export:harness": "npm run build && node scripts/export-harness.mjs"
+    "export:harness": "npm run build && node scripts/export-harness.mjs",
+    "postinstall": "npm run refreshTypes --workspace @dms/control"
   },
   "devDependencies": {
     "@eslint/js": "9.25.1",
