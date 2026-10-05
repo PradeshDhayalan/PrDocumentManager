@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { Theme } from '@fluentui/react-components';
 import { IInputs, IOutputs } from './generated/ManifestTypes';
 import { DmsGridHost } from './src/app/DmsGridHost';
+import { RaiseCustomAction } from './src/services/customActions';
 import { HostContext } from './src/types/HostContext';
 type RuntimeContext = ComponentFramework.Context<IInputs> & {
-  fluentDesignLanguage?: { tokenTheme?: Theme };
+  events?: { OnCustomAction?: RaiseCustomAction };
   page?: { getClientUrl(): string };
 };
 export class DmsGrid implements ComponentFramework.ReactControl<IInputs, IOutputs> {
   public init(context: ComponentFramework.Context<IInputs>): void {
     // TODO(SPIKE-S1): validate dataset paging and filtering on real form subgrids.
-    context.parameters.documents.paging.setPageSize(1);
+    context.parameters.documents.paging.setPageSize(context.parameters.pageSize.raw || 50);
     const info = context.mode as ComponentFramework.Mode & {
       contextInfo?: { entityId: string; entityTypeName: string };
     };
@@ -37,14 +37,22 @@ export class DmsGrid implements ComponentFramework.ReactControl<IInputs, IOutput
       contextInfo?: { entityId: string; entityTypeName: string };
     };
     const host: HostContext = {
+      customActionsJson: context.parameters.customActionsJson?.raw || undefined,
+      raiseCustomAction: runtime.events?.OnCustomAction
+        ? (request) => runtime.events!.OnCustomAction!(request)
+        : undefined,
       recordId: mode.contextInfo?.entityId.replace(/[{}]/g, '') || '',
       entityName: mode.contextInfo?.entityTypeName || '',
       // TODO(SPIKE-S4): context.page is undocumented; validate the same-origin fallback.
       clientUrl: runtime.page?.getClientUrl() || window.location.origin,
       allocatedHeight: context.mode.allocatedHeight,
-      theme: runtime.fluentDesignLanguage?.tokenTheme,
       getString: (key) => context.resources.getString(key),
       showTitle: context.parameters.showTitle.raw !== false,
+      defaultView: String(context.parameters.defaultView.raw) === '1' ? 'Tiles' : 'List',
+      pageSize: context.parameters.pageSize.raw || 50,
+      enableDragDrop: context.parameters.enableDragDrop.raw !== false,
+      showDetailsPane: context.parameters.showDetailsPane.raw !== false,
+      userId: context.userSettings?.userId?.replace(/[{}]/g, ''),
     };
     return React.createElement(DmsGridHost, { host });
   }

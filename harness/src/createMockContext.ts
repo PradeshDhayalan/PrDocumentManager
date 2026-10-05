@@ -12,15 +12,23 @@ export const strings = new Map(
 export function getString(key: string): string {
   return strings.get(key) || key;
 }
-export function createMockContext(theme: Theme, recordId: string): HostContext {
+export function createMockContext(
+  theme: Theme,
+  recordId: string,
+  entityName = 'account',
+): HostContext {
   return {
     recordId,
-    entityName: 'account',
+    entityName,
     clientUrl: window.location.origin,
     allocatedHeight: -1,
     theme,
     getString,
     showTitle: true,
+    userId: 'aaaaaaaa-aaaa-4aaa-8aaa-000000000001',
+    pageSize: 50,
+    enableDragDrop: true,
+    showDetailsPane: true,
   };
 }
 
@@ -30,6 +38,8 @@ export function createMockPcfContext(
   host: HostContext,
 ): ComponentFramework.Context<import('../../control/DmsGrid/generated/ManifestTypes').IInputs> {
   const context = {
+    events: { OnCustomAction: host.raiseCustomAction },
+    userSettings: { userId: host.userId },
     mode: {
       allocatedHeight: host.allocatedHeight,
       allocatedWidth: 1440,
@@ -39,6 +49,7 @@ export function createMockPcfContext(
     fluentDesignLanguage: { tokenTheme: host.theme },
     resources: { getString: host.getString },
     parameters: {
+      customActionsJson: { raw: host.customActionsJson || '' },
       documents: {
         records: {},
         sortedRecordIds: [],

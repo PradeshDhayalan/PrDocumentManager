@@ -1,0 +1,23 @@
+{
+  "actions": [
+    {
+      "id": "markReviewed",
+      "label": "Mark as reviewed",
+      "icon": "Checkmark",
+      "order": 10,
+      "selection": { "min": 1, "max": 20 },
+      "handler": "Contoso.Documents.markReviewed",
+      "confirmMessage": "Mark the selected documents as reviewed?",
+      "refreshOnSuccess": true
+    },
+    {
+      "id": "showSelection",
+      "label": "Show selection",
+      "icon": "Document",
+      "order": 20,
+      "selection": { "min": 1 },
+      "handler": "Contoso.Documents.showSelection",
+      "refreshOnSuccess": false
+    }
+  ]
+}

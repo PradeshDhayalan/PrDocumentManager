@@ -1,0 +1,2 @@
+export const microsoftFontFamily =
+  "'Segoe UI','Segoe UI Web (West European)',-apple-system,BlinkMacSystemFont,Roboto,'Helvetica Neue',sans-serif";

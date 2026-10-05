@@ -78,4 +78,8 @@
   <data name="record.unsaved">
     <value>Unsaved record</value>
   </data>
+  <data name="input.customActions"><value>Custom action buttons (JSON)</value></data>
+  <data name="input.customActions.description"><value>JSON actions with labels, registered handlers and selection rules.</value></data>
+  <data name="event.customAction"><value>Custom action selected</value></data>
+  <data name="event.customAction.description"><value>Register a form handler to process configured custom buttons.</value></data>
 </root>
