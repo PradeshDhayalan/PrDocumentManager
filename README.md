@@ -34,3 +34,13 @@ Open http://localhost:5173 on that Mac. Both the harness and mock API must be ru
 Run `npm run export:harness` to create `artifacts/dms-harness.zip`. Extract the ZIP on your computer, open a terminal in `dms-harness`, and run `node start.cjs` with Node 20+. Open http://localhost:5173. This prebuilt package includes the React/Fluent harness, bundled mock API and generated seed files; it needs no npm install or ffmpeg on the receiving computer. API and UI share one loopback-only port. It includes the interactive grid and mock file operations.
 
 Current harness screens: [List](docs/screenshots/list.png) · [Tiles](docs/screenshots/tiles.png).
+
+## Prebuilt review on a separate port
+
+Download [the ready-to-run review ZIP](downloads/dms-grid-review.zip), extract it in Downloads, and run:
+
+```sh
+node ~/Downloads/dms-harness/start.cjs --open
+```
+
+This starts the interactive grid and mock API together on **http://localhost:5180**, separate from an existing development server on 5173. No npm install is needed; Node 20+ is required. The package includes fresh samples, a Mac launcher, dependency notices and `build-info.json` identifying the packaged app revision. Local changes persist inside the extracted folder.

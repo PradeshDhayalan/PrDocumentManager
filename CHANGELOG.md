@@ -24,3 +24,7 @@ Harness adds record/provider switches and automatic first-run sample setup witho
 Validation: 16 Jest tests; browser checks for both selection views, themes/unsaved/empty states, 1,200-row paging, upload/duplicate/preview/byte-equal download/edit/delete, SharePoint links, narrow command overflow, built-PCF date picker and metadata conflicts. Typecheck/lint, harness/API builds and production PCF build checked. Production PCF bundle: 292,884 bytes, below the 500 KiB limit.
 
 These checks validate the mock integration. Graph photos, tenant authorization, real action payloads/security/metadata mapping, production cascade plugins, actual Office thumbnail rendering and optional SharePoint embedding remain deferred; S1–S8 are not marked tenant-verified.
+
+## Portable review package
+
+Published `downloads/dms-grid-review.zip` with the interactive app, bundled mock API, generated sample files, dependency notices and Mac launcher. Defaults to port 5180, opens the browser on Mac with `--open`, and exposes the packaged revision in `build-info.json`. Verified from a fresh extracted folder without installing dependencies: 22 documents, successful upload, byte-equal download, deletion and no browser errors.
