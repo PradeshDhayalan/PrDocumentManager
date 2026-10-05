@@ -471,3 +471,36 @@ test('configuration, metadata, faults, framing and reset are available without e
   expect(store.snapshot.documents).toHaveLength(1222);
   expect(store.uploads.size).toBe(0);
 });
+test('server compensation removes failed-owned bytes but protects completed documents and SharePoint', async () => {
+  const note = target();
+  await request(app)
+    .post(api + '/annotations')
+    .send({ ...note, documentbody: Buffer.from('partial').toString('base64') })
+    .expect(201);
+  const row = { ...baseRow(), dms_storageref: note.annotationid, dms_uploadstate: 100000000 };
+  await request(app)
+    .post(api + '/dms_documents')
+    .send(row)
+    .expect(201);
+  await request(app)
+    .post(api + '/dms_CleanupFailedUpload')
+    .send({ DocumentId: row.dms_documentid })
+    .expect(204);
+  expect(fs.existsSync(store.file(note.annotationid))).toBe(false);
+  expect(store.entity('documents', row.dms_documentid).dms_uploadstate).toBe(100000002);
+  const completed = store.snapshot.documents.find(
+    (document) => document.dms_provider === 100000000 && document.dms_uploadstate === 100000001,
+  )!;
+  await request(app)
+    .post(api + '/dms_CleanupFailedUpload')
+    .send({ DocumentId: completed.dms_documentid })
+    .expect(409);
+  expect(fs.existsSync(store.file(String(completed.dms_storageref)))).toBe(true);
+  const reference = store.snapshot.documents.find(
+    (document) => document.dms_provider === 100000001,
+  )!;
+  await request(app)
+    .post(api + '/dms_CleanupFailedUpload')
+    .send({ DocumentId: reference.dms_documentid })
+    .expect(400);
+});

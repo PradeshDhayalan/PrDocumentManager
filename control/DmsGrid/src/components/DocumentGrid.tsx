@@ -29,6 +29,7 @@ import DocumentThumbnail from './DocumentThumbnail';
 import { DocumentPerson } from './DocumentPerson';
 import { FileIcon } from './FileIcon';
 const useStyles = makeStyles({
+  draggingHeader: { opacity: 0.55 },
   grid: { padding: '0 12px', boxSizing: 'border-box' },
   header: {
     height: '48px',
@@ -337,10 +338,12 @@ export default function DocumentGrid({
         >
           {({ renderHeaderCell, columnId }) => (
             <DataGridHeaderCell
-              className={s.headerCell}
+              className={mergeClasses(
+                s.headerCell,
+                draggingColumn === String(columnId) && s.draggingHeader,
+              )}
               data-column-id={columnId}
               title="Drag to reorder; drag the right edge to resize"
-              style={{ opacity: draggingColumn === String(columnId) ? 0.55 : 1 }}
               onPointerDown={(event: React.PointerEvent<HTMLElement>) => event.stopPropagation()}
             >
               <Button

@@ -3,7 +3,6 @@ React 16.14 + Fluent UI v9 virtual PCF document grid with a local mock Dataverse
 
 ```sh
 npm ci
-npm run seed
 npm run dev
 ```
 Harness: http://localhost:5173 . Mock API: http://localhost:5174 . API calls from the harness use a same-origin Vite proxy.
@@ -12,7 +11,7 @@ Checks: `npm run typecheck`, `npm run lint`, `npm test`, `npm run e2e`, `npm run
 
 The local PCF control now implements the approved mockup: list and tile views, selection, server-side search/filter/sort/paging, details, metadata editing (including bulk updates), file uploads/downloads, previews, deletion and SharePoint links. The persistent mock API supplies local files, metadata, concurrency checks, migration and fault injection. The original visual prototype is preserved in `mockup/`. Microsoft Graph authentication is deferred. No real tenant or Dataverse environment is connected. See `docs/spikes.md` and `docs/decisions.md`.
 
-Sample generation needs `ffmpeg` and `ffprobe` on PATH (or `DMS_FFMPEG_PATH` / `DMS_FFPROBE_PATH`). Set those variables if FFmpeg is installed outside PATH. Generated sample data stays local and is ignored by git. See [mock API guide](docs/mock-api.md) for working examples.
+`npm run dev` initializes samples on first use and preserves existing data. `npm run seed` resets local sample data. Video generation uses ffmpeg when available or the included fallback; ffprobe is required for video validation tests. Generated sample data stays local and is ignored by git. See [mock API guide](docs/mock-api.md) for working examples.
 
 ## Opening from a cloud workspace
 
@@ -35,3 +34,19 @@ Images, PDFs, video and text have local previews. Office and unsupported formats
 Set the PCF input `customActionsJson` to the configuration in [examples/custom-actions.json](examples/custom-actions.json). Buttons render inside the control, use selection limits, and move into More commands when space is limited. The local harness includes working **Mark as reviewed** and **Show selection** examples.
 
 Register named handlers through the form JavaScript web resource in [examples/custom-actions.webresource.js](examples/custom-actions.webresource.js). The PCF raises `OnCustomAction` with selected records and a completion callback; it does not evaluate JavaScript stored in JSON. See [developer setup and event contract](docs/custom-actions.md). Custom PCF events are a Microsoft preview feature; local behavior is verified, while real model-driven form registration needs tenant verification.
+
+## Prebuilt review on a separate port
+
+Download [the ready-to-run review ZIP](downloads/dms-grid-review.zip), extract it in Downloads, and run:
+
+```sh
+node ~/Downloads/dms-harness/start.cjs --open
+```
+
+This starts the interactive grid and mock API together on **http://localhost:5180**, separate from an existing development server on 5173. No npm install is needed; Node 20+ is required. This ZIP contains the earlier review revision; use the source development app for the latest changes. The package includes fresh samples, a Mac launcher, dependency notices and `build-info.json` identifying the packaged app revision. Local changes persist inside the extracted folder.
+
+## Table columns and file icons
+
+Use **More commands → Edit columns** to show or hide any standard or metadata column, change its order, or reset to the configured defaults. Drag a header's grip to reorder it; drag its right edge to resize it. At least one data column stays visible. Column preferences remain for the current control session, including switches between List and Tiles. The entity configuration's `visibleColumns` supplies the initial field order.
+
+Tiles use wider gutters and padded details while retaining a fixed two-line filename area. File icons use Microsoft's `@fluentui/react-icons-file-type` artwork, including Office application logos, served from the Microsoft Fluent CDN. Command icons use Microsoft's Fluent system icons. Representative document covers are previews, not file icons.

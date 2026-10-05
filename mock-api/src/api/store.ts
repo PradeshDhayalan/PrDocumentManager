@@ -138,6 +138,36 @@ export class Store {
     this.snapshot.documents = this.snapshot.documents.filter((other) => other !== row);
     this.persist();
   }
+  cleanupUpload(id: string): void {
+    const row = this.entity('documents', id);
+    if (row.dms_provider !== 100000000)
+      throw new ApiError(400, 'InvalidProvider', 'Only owned Note uploads can be cleaned up.');
+    if (row.dms_uploadstate === 100000001)
+      throw new ApiError(409, 'AlreadyAvailable', 'A completed document cannot be compensated.');
+    const annotationId = String(row.dms_storageref || '');
+    if (annotationId) {
+      const note = this.snapshot.annotations.find((note) => note.annotationid === annotationId);
+      if (
+        note &&
+        note._objectid_value === row.dms_regardingid &&
+        !this.snapshot.documents.some(
+          (other) => other !== row && other.dms_storageref === annotationId,
+        )
+      )
+        this.deleteAnnotation(annotationId);
+      for (const [token, session] of this.uploads)
+        if (
+          session.target.annotationid === annotationId &&
+          session.target._objectid_value === row.dms_regardingid
+        ) {
+          fs.rmSync(path.join(this.directory, 'blocks', token), { recursive: true, force: true });
+          this.uploads.delete(token);
+        }
+    }
+    row.dms_uploadstate = 100000002;
+    this.bump(row);
+    this.persist();
+  }
   deleteAnnotation(id: string, match?: string): void {
     const row = this.entity('annotations', id);
     this.checkMatch(row, match);

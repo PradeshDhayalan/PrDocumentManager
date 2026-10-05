@@ -113,29 +113,35 @@ export async function generateSeed(seedRoot = folder, now = Date.now()): Promise
       .toBuffer(),
   );
   // Use an installed ffmpeg first; no runtime external content is needed.
-  execFileSync(
-    process.env.DMS_FFMPEG_PATH || 'ffmpeg',
-    [
-      '-hide_banner',
-      '-loglevel',
-      'error',
-      '-y',
-      '-f',
-      'lavfi',
-      '-i',
-      'testsrc=size=320x180:rate=15',
-      '-t',
-      '2',
-      '-c:v',
-      'libx264',
-      '-pix_fmt',
-      'yuv420p',
-      '-movflags',
-      '+faststart',
-      path.join(seedRoot, 'Kickoff Recording.mp4'),
-    ],
-    { stdio: 'pipe' },
-  );
+  const videoPath = path.join(seedRoot, 'Kickoff Recording.mp4');
+  try {
+    execFileSync(
+      process.env.DMS_FFMPEG_PATH || 'ffmpeg',
+      [
+        '-hide_banner',
+        '-loglevel',
+        'error',
+        '-y',
+        '-f',
+        'lavfi',
+        '-i',
+        'testsrc=size=320x180:rate=15',
+        '-t',
+        '2',
+        '-c:v',
+        'libx264',
+        '-pix_fmt',
+        'yuv420p',
+        '-movflags',
+        '+faststart',
+        path.join(seedRoot, 'Kickoff Recording.mp4'),
+      ],
+      { stdio: 'pipe' },
+    );
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    fs.copyFileSync(path.join(__dirname, 'assets/sample.mp4'), videoPath);
+  }
   write(
     'Meeting Notes.txt',
     'Contoso kickoff\n\nAgenda: scope, delivery dates, commercial review.\nOwner: Alex Wilber.\n',

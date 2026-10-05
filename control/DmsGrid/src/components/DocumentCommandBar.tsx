@@ -1,3 +1,4 @@
+export type Action = 'open' | 'preview' | 'download' | 'copy' | 'delete' | 'edit';
 import { CustomAction, actionEnabled } from '../services/customActions';
 import * as React from 'react';
 import { useState } from 'react';

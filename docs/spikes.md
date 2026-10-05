@@ -15,3 +15,6 @@
 - `mock-api/src/api/metadata.ts` contains simplified metadata labels/options/security flags (S5).
 - `mock-api/src/api/store.ts` isolates annotation parent binding and ownership-aware pre-delete cascade (S6). No production client deletes annotations.
 - No real-org assumptions were marked verified. The mock tests prove local contracts only.
+
+## Interactive control isolation
+The typed `DataverseClient`, `DocumentRepository`, provider registry, `MetadataService` and server compensation action implement the local contracts. The production bundle builds at about 286 KiB and mounts with React 16.14/platform Fluent in the browser test. This does not verify a target Dataverse tenant or the S1–S8 contracts above. SharePoint embedding remains disabled; Graph authentication/photos remain deferred.

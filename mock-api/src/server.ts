@@ -154,6 +154,24 @@ export function createApp(store: Store) {
     res.set('ETag', String(row['@odata.etag'])).json(selectEntity(row, select));
   };
   api.get(
+    '/systemusers',
+    route((req, res) => {
+      const rows = [
+        'MOD Administrator',
+        'Michael Bose',
+        'Alex Wilber',
+        'Irvin Sayers',
+        'Megan Bowen',
+        'Adele Vance',
+      ].map((fullname, i) => ({
+        systemuserid: `aaaaaaaa-aaaa-4aaa-8aaa-${String(i + 1).padStart(12, '0')}`,
+        fullname,
+        '@odata.etag': 'W/"1"',
+      }));
+      res.json(queryEntities(rows, requestUrl(req), req.get('Prefer')));
+    }),
+  );
+  api.get(
     '/dms_documents',
     route((req, res) => {
       res.json(queryEntities(store.snapshot.documents, requestUrl(req), req.get('Prefer')));
@@ -314,6 +332,13 @@ export function createApp(store: Store) {
           )
           .toString('base64'),
       });
+    }),
+  );
+  api.post(
+    '/dms_CleanupFailedUpload',
+    route((req, res) => {
+      store.cleanupUpload(requireGuid(payload(req.body).DocumentId));
+      res.sendStatus(204);
     }),
   );
   api.post(

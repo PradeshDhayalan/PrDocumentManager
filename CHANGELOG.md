@@ -36,3 +36,31 @@ Removed the entire local harness header, theme/record/provider selectors, breadc
 Added the `customActionsJson` PCF input and `OnCustomAction` event. Named handlers receive a snapshot of selected records, parent context and a completion callback. Buttons support icons, ordering, selection limits, confirmation, busy states, overflow and refresh after success. Configuration validates without evaluating source code; errors and a 30-second completion timeout appear in the control.
 
 The local harness uses the same example JavaScript web resource intended for form OnLoad registration. Mark as reviewed persists a Description marker; Show selection displays selected names. Unit tests cover parsing, dispatch, completion, timeout and cancellation; browser coverage verifies confirmation, persistence, overflow and selection limits. Real tenant event registration remains unverified.
+
+## Earlier remote implementation history
+
+The following entries describe the earlier GitHub revisions. The local v2 control incorporates the subsequent UI and custom-action changes above.
+
+## Fresh-clone setup fix
+Generate PCF manifest types automatically after dependency installation so type-checking and CI work without a prior PCF build.
+
+## Interactive mock integration
+Replaced the empty shell with API-backed Fluent List/Tile document views, shared range/toggle selection and keyboard navigation, command overflow, column menus/resizing, server search/presets/paging, status/expiry badges, image thumbnails, Personas and a details pane. Added config/capability-based provider resolution, including unavailable-provider fallback.
+
+Connected a three-worker upload queue with incremental SHA-256 duplicate checks, filename/size/extension validation, 4 MiB block transfers, progress/cancel/retry and server compensation. Connected owned-byte download, safe text/image/PDF preview, reference opening, copy links, SharePoint URL validation, bulk deletion and metadata-driven editing with ETag reload/overwrite handling.
+
+Harness adds record/provider switches and automatic first-run sample setup without resetting existing data. Included an original MP4 fallback so running samples does not require ffmpeg. DatePicker compatibility uses platform Fluent exports in the PCF build to preserve contexts and avoid duplicated core components.
+
+Validation: 16 Jest tests; browser checks for both selection views, themes/unsaved/empty states, 1,200-row paging, upload/duplicate/preview/byte-equal download/edit/delete, SharePoint links, narrow command overflow, built-PCF date picker and metadata conflicts. Typecheck/lint, harness/API builds and production PCF build checked. Production PCF bundle: 292,884 bytes, below the 500 KiB limit.
+
+These checks validate the mock integration. Graph photos, tenant authorization, real action payloads/security/metadata mapping, production cascade plugins, actual Office thumbnail rendering and optional SharePoint embedding remain deferred; S1–S8 are not marked tenant-verified.
+
+## Portable review package
+
+Published `downloads/dms-grid-review.zip` with the interactive app, bundled mock API, generated sample files, dependency notices and Mac launcher. Defaults to port 5180, opens the browser on Mac with `--open`, and exposes the packaged revision in `build-info.json`. Verified from a fresh extracted folder without installing dependencies: 22 documents, successful upload, byte-equal download, deletion and no browser errors.
+
+## Configurable columns and tile spacing
+
+All built-in and metadata table columns can be shown, hidden and reordered in Edit columns. Header drag grips reorder columns; Fluent resize handles change their widths. Entity visibleColumns defines initial order, and Reset restores it. Resizing and column dragging do not trigger record drag selection. Tiles have 24px desktop gutters, more body padding and lighter shadows. File visuals now use Microsoft's official Office and file-type artwork.
+
+Merged the remote setup and portable-review improvements with the local v2 control. Preserved automatic seed setup, manifest generation, existing review artifacts and the earlier implementation modules. Restored the pinned React 16-compatible Griffel runtime for production PCF builds.
