@@ -70,7 +70,7 @@
     <value>High contrast</value>
   </data>
   <data name="harness.stage">
-    <value>Milestone M0 · Control scaffold</value>
+    <value>Interactive PCF · Mock Dataverse API</value>
   </data>
   <data name="record.contoso">
     <value>Contoso Ltd</value>
@@ -78,4 +78,560 @@
   <data name="record.unsaved">
     <value>Unsaved record</value>
   </data>
+  <data name="commands.label">
+    <value>Document commands</value>
+  </data>
+  <data name="commands.more">
+    <value>More commands</value>
+  </data>
+  <data name="density.toggle">
+    <value>Toggle compact rows</value>
+  </data>
+  <data name="columns.edit">
+    <value>Edit columns</value>
+  </data>
+  <data name="columns.add">
+    <value>Add column</value>
+  </data>
+  <data name="columns.hide">
+    <value>Hide this column</value>
+  </data>
+  <data name="columns.left">
+    <value>Move left</value>
+  </data>
+  <data name="columns.right">
+    <value>Move right</value>
+  </data>
+  <data name="column.menu">
+    <value>Options for {name}</value>
+  </data>
+  <data name="shortcuts.title">
+    <value>Keyboard shortcuts</value>
+  </data>
+  <data name="shortcuts.body">
+    <value>Ctrl+A: select loaded documents. Ctrl+click: toggle selection. Shift+click: select a range. Escape: clear selection. Enter: open. F2: edit properties. Delete: delete. Arrow keys: navigate; hold Shift to select a range. Space: select a tile.</value>
+  </data>
+  <data name="action.upload">
+    <value>Upload</value>
+  </data>
+  <data name="action.addLink">
+    <value>Add SharePoint link</value>
+  </data>
+  <data name="action.new">
+    <value>New</value>
+  </data>
+  <data name="action.refresh">
+    <value>Refresh</value>
+  </data>
+  <data name="action.open">
+    <value>Open</value>
+  </data>
+  <data name="action.preview">
+    <value>Preview</value>
+  </data>
+  <data name="action.download">
+    <value>Download</value>
+  </data>
+  <data name="action.copy">
+    <value>Copy link</value>
+  </data>
+  <data name="action.delete">
+    <value>Delete</value>
+  </data>
+  <data name="action.edit">
+    <value>Edit properties</value>
+  </data>
+  <data name="action.done">
+    <value>Done</value>
+  </data>
+  <data name="action.retry">
+    <value>Retry</value>
+  </data>
+  <data name="action.cancel">
+    <value>Cancel</value>
+  </data>
+  <data name="action.close">
+    <value>Close</value>
+  </data>
+  <data name="action.save">
+    <value>Save</value>
+  </data>
+  <data name="action.skip">
+    <value>Skip</value>
+  </data>
+  <data name="search">
+    <value>Search documents</value>
+  </data>
+  <data name="views.label">
+    <value>Views</value>
+  </data>
+  <data name="filters.title">
+    <value>Filters</value>
+  </data>
+  <data name="filters.allTypes">
+    <value>All document types</value>
+  </data>
+  <data name="filters.clear">
+    <value>Clear filters</value>
+  </data>
+  <data name="details.title">
+    <value>Details</value>
+  </data>
+  <data name="details.close">
+    <value>Close details</value>
+  </data>
+  <data name="details.select">
+    <value>Select a document to see its details.</value>
+  </data>
+  <data name="properties.title">
+    <value>Properties</value>
+  </data>
+  <data name="properties.edit">
+    <value>Edit all properties</value>
+  </data>
+  <data name="activity.title">
+    <value>Activity</value>
+  </data>
+  <data name="storage.title">
+    <value>Storage</value>
+  </data>
+  <data name="storage.source">
+    <value>Source</value>
+  </data>
+  <data name="link.reference">
+    <value>SharePoint reference</value>
+  </data>
+  <data name="link.permissions">
+    <value>This is a reference. Access and permissions are managed by SharePoint.</value>
+  </data>
+  <data name="description">
+    <value>Description</value>
+  </data>
+  <data name="created">
+    <value>Created</value>
+  </data>
+  <data name="createdBy">
+    <value>Created by</value>
+  </data>
+  <data name="empty.value">
+    <value>—</value>
+  </data>
+  <data name="mixed">
+    <value>Mixed values</value>
+  </data>
+  <data name="yes">
+    <value>Yes</value>
+  </data>
+  <data name="no">
+    <value>No</value>
+  </data>
+  <data name="column.dms_name">
+    <value>Name</value>
+  </data>
+  <data name="column.modifiedon">
+    <value>Modified</value>
+  </data>
+  <data name="column._modifiedby_value">
+    <value>Modified by</value>
+  </data>
+  <data name="column.dms_filesizekb">
+    <value>File size</value>
+  </data>
+  <data name="column.dms_documenttype">
+    <value>Document type</value>
+  </data>
+  <data name="column.dms_documentstatus">
+    <value>Status</value>
+  </data>
+  <data name="column.dms_expirydate">
+    <value>Expiry date</value>
+  </data>
+  <data name="column.dms_description">
+    <value>Description</value>
+  </data>
+  <data name="sort.ascending">
+    <value>Sort ascending</value>
+  </data>
+  <data name="sort.descending">
+    <value>Sort descending</value>
+  </data>
+  <data name="sort.name">
+    <value>Sort by name</value>
+  </data>
+  <data name="preset.all">
+    <value>All documents</value>
+  </data>
+  <data name="preset.recent">
+    <value>Recently modified</value>
+  </data>
+  <data name="preset.expiring">
+    <value>Expiring soon</value>
+  </data>
+  <data name="preset.expired">
+    <value>Expired</value>
+  </data>
+  <data name="preset.mine">
+    <value>My documents</value>
+  </data>
+  <data name="selection.all">
+    <value>Select all loaded documents</value>
+  </data>
+  <data name="selection.item">
+    <value>Select {name}</value>
+  </data>
+  <data name="selection.count">
+    <value>{count} selected</value>
+  </data>
+  <data name="row.actions">
+    <value>Actions for {name}</value>
+  </data>
+  <data name="row.more">
+    <value>More actions for {name}</value>
+  </data>
+  <data name="thumbnail">
+    <value>Thumbnail preview of {name}</value>
+  </data>
+  <data name="expiry.expired">
+    <value>Expired</value>
+  </data>
+  <data name="expiry.soon">
+    <value>In {days} days</value>
+  </data>
+  <data name="status.pending">
+    <value>Uploading</value>
+  </data>
+  <data name="status.failed">
+    <value>Upload failed</value>
+  </data>
+  <data name="loading">
+    <value>Loading…</value>
+  </data>
+  <data name="saving">
+    <value>Saving…</value>
+  </data>
+  <data name="deleting">
+    <value>Deleting…</value>
+  </data>
+  <data name="notConfigured">
+    <value>Document management is not enabled for this record type.</value>
+  </data>
+  <data name="noResults">
+    <value>No documents match your filters.</value>
+  </data>
+  <data name="items.count">
+    <value>{loaded} of {total} items</value>
+  </data>
+  <data name="items.loaded">
+    <value>All items loaded</value>
+  </data>
+  <data name="items.loadMore">
+    <value>Load more</value>
+  </data>
+  <data name="offline">
+    <value>You are offline. Connect again to upload, edit, or download files.</value>
+  </data>
+  <data name="message.dismiss">
+    <value>Dismiss message</value>
+  </data>
+  <data name="error.permission">
+    <value>You do not have permission to perform this action.</value>
+  </data>
+  <data name="error.throttle">
+    <value>The service is busy. Please retry shortly.</value>
+  </data>
+  <data name="error.validation">
+    <value>Check your inputs and try again.</value>
+  </data>
+  <data name="error.conflict">
+    <value>This document changed. Reload its current values and try again.</value>
+  </data>
+  <data name="error.notFound">
+    <value>This document could not be found. Refresh the list.</value>
+  </data>
+  <data name="error.network">
+    <value>The service could not be reached. Check your connection and retry.</value>
+  </data>
+  <data name="error.unknown">
+    <value>The action could not be completed. Please retry.</value>
+  </data>
+  <data name="error.metadata">
+    <value>Document properties could not be loaded.</value>
+  </data>
+  <data name="error.correlation">
+    <value>Support reference: {id}</value>
+  </data>
+  <data name="provider.unavailable">
+    <value>This storage provider is unavailable.</value>
+  </data>
+  <data name="provider.Note">
+    <value>Dataverse Notes</value>
+  </data>
+  <data name="provider.SharePoint">
+    <value>SharePoint</value>
+  </data>
+  <data name="provider.AzureBlob">
+    <value>Azure Blob</value>
+  </data>
+  <data name="provider.External">
+    <value>External storage</value>
+  </data>
+  <data name="migration.running">
+    <value>Importing legacy documents: {processed} of {total}.</value>
+  </data>
+  <data name="migration.failed">
+    <value>Legacy import stopped. Contact your administrator to retry the migration.</value>
+  </data>
+  <data name="copy.failed">
+    <value>The clipboard could not be accessed.</value>
+  </data>
+  <data name="copy.result">
+    <value>Copied {count} document links.</value>
+  </data>
+  <data name="download.progress">
+    <value>Downloading {count} of {total}: {percent}%</value>
+  </data>
+  <data name="download.result">
+    <value>Downloaded {count}; {failed} failed; {skipped} skipped.</value>
+  </data>
+  <data name="delete.result">
+    <value>Deleted {count} documents.</value>
+  </data>
+  <data name="edit.saved">
+    <value>Properties saved.</value>
+  </data>
+  <data name="link.added">
+    <value>SharePoint reference added.</value>
+  </data>
+  <data name="upload.tray">
+    <value>Uploads</value>
+  </data>
+  <data name="upload.clearCompleted">
+    <value>Clear completed</value>
+  </data>
+  <data name="upload.anyway">
+    <value>Upload anyway</value>
+  </data>
+  <data name="upload.cancel">
+    <value>Cancel upload of {name}</value>
+  </data>
+  <data name="upload.drop">
+    <value>Drop files to upload</value>
+  </data>
+  <data name="upload.folders">
+    <value>Folders are not supported. Select individual files.</value>
+  </data>
+  <data name="upload.zero">
+    <value>Empty files cannot be uploaded.</value>
+  </data>
+  <data name="upload.tooLarge">
+    <value>This file exceeds the configured size limit.</value>
+  </data>
+  <data name="upload.extension">
+    <value>This file type is not allowed.</value>
+  </data>
+  <data name="upload.failedHint">
+    <value>This upload did not complete. Retry from the upload tray or delete the failed record.</value>
+  </data>
+  <data name="job.queued">
+    <value>Queued</value>
+  </data>
+  <data name="job.hashing">
+    <value>Checking file…</value>
+  </data>
+  <data name="job.duplicate">
+    <value>A matching file already exists</value>
+  </data>
+  <data name="job.uploading">
+    <value>Uploading…</value>
+  </data>
+  <data name="job.complete">
+    <value>Uploaded</value>
+  </data>
+  <data name="job.failed">
+    <value>Upload failed</value>
+  </data>
+  <data name="job.cancelled">
+    <value>Cancelled</value>
+  </data>
+  <data name="preview.loading">
+    <value>Loading preview…</value>
+  </data>
+  <data name="preview.unsupported">
+    <value>A preview is not available for this file. Download it to view.</value>
+  </data>
+  <data name="preview.reference">
+    <value>Open this reference in SharePoint to view the document.</value>
+  </data>
+  <data name="preview.failed">
+    <value>The preview could not be loaded.</value>
+  </data>
+  <data name="link.url">
+    <value>SharePoint URL</value>
+  </data>
+  <data name="link.name">
+    <value>Display name (optional)</value>
+  </data>
+  <data name="link.placeholder">
+    <value>https://contoso.sharepoint.com/sites/…</value>
+  </data>
+  <data name="link.invalid">
+    <value>Enter an HTTPS URL on an allowed SharePoint host.</value>
+  </data>
+  <data name="link.tooLong">
+    <value>The URL is too long.</value>
+  </data>
+  <data name="delete.title">
+    <value>Delete {count} documents?</value>
+  </data>
+  <data name="delete.owned">
+    <value>Owned Note files and their document records will be deleted.</value>
+  </data>
+  <data name="delete.reference">
+    <value>SharePoint references will be removed. Files in SharePoint will remain available.</value>
+  </data>
+  <data name="delete.partial">
+    <value>Some documents could not be deleted. {count} remain; retry or cancel.</value>
+  </data>
+  <data name="edit.choose">
+    <value>Choose a value</value>
+  </data>
+  <data name="edit.date">
+    <value>Choose a date</value>
+  </data>
+  <data name="edit.readonly">
+    <value>Read only</value>
+  </data>
+  <data name="edit.required">
+    <value>This field is required.</value>
+  </data>
+  <data name="edit.unsupported">
+    <value>This property type is not supported.</value>
+  </data>
+  <data name="edit.conflict">
+    <value>Someone changed this document. Reload current values or confirm overwriting your changed fields.</value>
+  </data>
+  <data name="edit.reload">
+    <value>Reload</value>
+  </data>
+  <data name="edit.overwrite">
+    <value>Overwrite</value>
+  </data>
+  <data name="edit.overwriteConfirm">
+    <value>Overwrite your changed fields using the latest version of these documents?</value>
+  </data>
+  <data name="lookup.search">
+    <value>Search users…</value>
+  </data>
+  <data name="date.minutes">
+    <value>{count} minutes ago</value>
+  </data>
+  <data name="date.hours">
+    <value>{count} hours ago</value>
+  </data>
+  <data name="size.kb">
+    <value>{size} KB</value>
+  </data>
+  <data name="size.mb">
+    <value>{size} MB</value>
+  </data>
+  <data name="harness.provider">
+    <value>Active storage</value>
+  </data>
+  <data name="record.fabrikam">
+    <value>Fabrikam · 1,200 documents</value>
+  </data>
+  <data name="record.empty">
+    <value>Empty contact</value>
+  </data>
+  <data name="record.legacy">
+    <value>Legacy opportunity</value>
+  </data>
+  <data name="type.100000000">
+    <value>Contract</value>
+  </data>
+  <data name="type.100000001">
+    <value>Proposal</value>
+  </data>
+  <data name="type.100000002">
+    <value>Finance</value>
+  </data>
+  <data name="type.100000003">
+    <value>Legal</value>
+  </data>
+  <data name="type.100000004">
+    <value>Media</value>
+  </data>
+  <data name="type.100000005">
+    <value>Other</value>
+  </data>
+  <data name="status.100000000">
+    <value>Draft</value>
+  </data>
+  <data name="status.100000001">
+    <value>Active</value>
+  </data>
+  <data name="status.100000002">
+    <value>Archived</value>
+  </data>
+  <data name="upload.pending">
+    <value>Uploading</value>
+  </data>
+  <data name="upload.failed">
+    <value>Upload failed</value>
+  </data>
+  <data name="preview.sharePoint">
+    <value>Open this reference in SharePoint to view the document.</value>
+  </data>
+  <data name="preview.unavailable">
+    <value>A preview is not available for this file. Download it to view.</value>
+  </data>
+  <data name="action.openSharePoint">
+    <value>Open in SharePoint</value>
+  </data>
+  <data name="calendar.goToToday">
+    <value>Go to today</value>
+  </data>
+  <data name="calendar.prevMonthAriaLabel">
+    <value>Previous month</value>
+  </data>
+  <data name="calendar.nextMonthAriaLabel">
+    <value>Next month</value>
+  </data>
+  <data name="calendar.prevYearAriaLabel">
+    <value>Previous year</value>
+  </data>
+  <data name="calendar.nextYearAriaLabel">
+    <value>Next year</value>
+  </data>
+  <data name="calendar.prevYearRangeAriaLabel">
+    <value>Previous year range</value>
+  </data>
+  <data name="calendar.nextYearRangeAriaLabel">
+    <value>Next year range</value>
+  </data>
+  <data name="calendar.monthPickerHeaderAriaLabel">
+    <value>{0}, select to change the year</value>
+  </data>
+  <data name="calendar.yearPickerHeaderAriaLabel">
+    <value>{0}, select to change the month</value>
+  </data>
+  <data name="calendar.closeButtonAriaLabel">
+    <value>Close calendar</value>
+  </data>
+  <data name="calendar.weekNumberFormatString">
+    <value>Week {0}</value>
+  </data>
+  <data name="calendar.selectedDateFormatString">
+    <value>Selected date {0}</value>
+  </data>
+  <data name="calendar.todayDateFormatString">
+    <value>Today {0}</value>
+  </data>
+  <data name="calendar.dayMarkedAriaLabel">
+    <value>Marked date</value>
+  </data>
+  <data name="expand"><value>Expand</value></data>
+  <data name="expand.exit"><value>Exit expanded view</value></data>
+  <data name="error.control"><value>The document grid could not be displayed. Reload the control to try again.</value></data>
+  <data name="action.reload"><value>Reload</value></data>
 </root>

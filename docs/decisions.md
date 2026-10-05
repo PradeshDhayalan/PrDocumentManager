@@ -10,7 +10,13 @@
 - External SharePoint navigation is allowed; embedded previews are optional and disabled until S2 is validated.
 - Pin one React 16.14 instance and Griffel 1.5.32 workspace-wide: prevents duplicate React hooks and fully-specified ESM JSX-runtime resolution in PCF Webpack.
 - Generate all 14 listed fixture formats: Contoso therefore has 22 rows, rather than the approximate 18 in the brief.
-- Use installed ffmpeg/ffprobe for valid two-second MP4 fixtures; this avoids a second platform-binary dependency.
+- Use installed ffmpeg for generated video when available, with an included original two-second MP4 fallback for fresh desktop clones. ffprobe remains a test dependency.
 - Advance mocked migration on polling over 15 seconds; the real migration engine stays out of scope.
 - Persist committed binaries/metadata, keep mock transfer tokens process-local; real token lifetime/resume stays S3.
 - Generate ignored PCF manifest types in the root postinstall hook: fresh clones must type-check before any PCF build.
+
+- Use DatePicker compat 0.3.0, a classic-React-compatible release. The PCF Webpack adapter reuses public platform Fluent exports for Input/Field/Portal/theme/focus contexts; React 16.14 includes its JSX runtime backport.
+- Keep Graph photos deferred: mock Personas display initials; no external user-photo requests are issued.
+- Use native Fluent v9 ToolbarButton for all user actions, including drawers/dialogs, with Fluent Overflow/Menu for constrained space.
+- Image thumbnails read owned Note bytes. Office/PDF cards are illustrative covers, not claims of server-rendered document pages. Unknown formats retain a file cover/preview fallback.
+- Generate sample data automatically only when the persistent state is missing. Explicit seed/reset commands remain destructive to mock data and are documented as such.

@@ -45,6 +45,10 @@ export class DmsGrid implements ComponentFramework.ReactControl<IInputs, IOutput
       theme: runtime.fluentDesignLanguage?.tokenTheme,
       getString: (key) => context.resources.getString(key),
       showTitle: context.parameters.showTitle.raw !== false,
+      pageSize: context.parameters.pageSize.raw || 50,
+      defaultView: context.parameters.defaultView.raw === '1' ? 'tiles' : 'list',
+      enableDragDrop: context.parameters.enableDragDrop.raw !== false,
+      showDetailsPane: context.parameters.showDetailsPane.raw === true,
     };
     return React.createElement(DmsGridHost, { host });
   }

@@ -12,15 +12,21 @@ export const strings = new Map(
 export function getString(key: string): string {
   return strings.get(key) || key;
 }
-export function createMockContext(theme: Theme, recordId: string): HostContext {
+export function createMockContext(
+  theme: Theme,
+  recordId: string,
+  entityName = 'account',
+): HostContext {
   return {
     recordId,
-    entityName: 'account',
+    entityName,
     clientUrl: window.location.origin,
     allocatedHeight: -1,
     theme,
     getString,
     showTitle: true,
+    pageSize: 50,
+    showDetailsPane: false,
   };
 }
 
@@ -54,7 +60,7 @@ export function createMockPcfContext(
       defaultView: { raw: '0' },
       pageSize: { raw: 50 },
       showTitle: { raw: host.showTitle },
-      showDetailsPane: { raw: true },
+      showDetailsPane: { raw: host.showDetailsPane ?? false },
       enableTelemetry: { raw: false },
     },
   };

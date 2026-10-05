@@ -6,6 +6,8 @@ import {
   webDarkTheme,
   teamsHighContrastTheme,
   createLightTheme,
+  Dropdown,
+  Option,
   Toolbar,
   ToolbarButton,
   Text,
@@ -48,7 +50,13 @@ const useStyles = makeStyles({
     flexWrap: 'wrap',
     marginBottom: '24px',
   },
-  card: { maxWidth: '1440px', margin: '0 auto' },
+  card: {
+    maxWidth: '1440px',
+    margin: '0 auto',
+    boxShadow: tokens.shadow4,
+    borderRadius: tokens.borderRadiusMedium,
+    overflow: 'hidden',
+  },
   label: { color: tokens.colorNeutralForeground2, fontSize: '12px' },
 });
 function PcfMount({ host }: { host: HostContext }) {
@@ -63,8 +71,35 @@ function PcfMount({ host }: { host: HostContext }) {
 }
 function App() {
   const s = useStyles(),
-    [theme, setTheme] = React.useState<keyof typeof themes>('teal'),
-    [record, setRecord] = React.useState('11111111-1111-4111-8111-111111111111');
+    [theme, setTheme] = React.useState<keyof typeof themes>('blue'),
+    [record, setRecord] = React.useState('contoso'),
+    [provider, setProvider] = React.useState('Note');
+  const records: Record<string, { id: string; entity: string }> = {
+    contoso: { id: '11111111-1111-4111-8111-111111111111', entity: 'account' },
+    fabrikam: { id: '22222222-2222-4222-8222-222222222222', entity: 'account' },
+    empty: { id: '33333333-3333-4333-8333-333333333333', entity: 'contact' },
+    legacy: { id: '44444444-4444-4444-8444-444444444444', entity: 'opportunity' },
+    unsaved: { id: '', entity: 'account' },
+  };
+  const changeProvider = async (value: string) => {
+    const response = await fetch('/__mock/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ activeProvider: value }),
+    });
+    if (response.ok) {
+      setProvider(value);
+      window.dispatchEvent(new Event('dms-config-changed'));
+    }
+  };
+  React.useEffect(() => {
+    fetch('/__mock/state')
+      .then((response) => response.json())
+      .then((value: { config: { activeProvider: string } }) =>
+        setProvider(value.config.activeProvider),
+      )
+      .catch(() => undefined);
+  }, []);
   return (
     <FluentProvider theme={themes[theme]}>
       <div className={s.page}>
@@ -80,14 +115,32 @@ function App() {
               {getString(`theme.${name}`)}
             </ToolbarButton>
           ))}
-          <ToolbarButton
-            onClick={() => setRecord(record ? '' : '11111111-1111-4111-8111-111111111111')}
+          <Dropdown
+            aria-label={getString('harness.record')}
+            value={getString('record.' + record)}
+            selectedOptions={[record]}
+            onOptionSelect={(_, data) => setRecord(data.optionValue || 'contoso')}
           >
-            {getString(record ? 'record.contoso' : 'record.unsaved')}
-          </ToolbarButton>
+            {Object.keys(records).map((key) => (
+              <Option key={key} value={key}>
+                {getString('record.' + key)}
+              </Option>
+            ))}
+          </Dropdown>
+          <Dropdown
+            aria-label={getString('harness.provider')}
+            value={getString('provider.' + provider)}
+            selectedOptions={[provider]}
+            onOptionSelect={(_, data) => void changeProvider(data.optionValue || 'Note')}
+          >
+            <Option value="Note">{getString('provider.Note')}</Option>
+            <Option value="SharePoint">{getString('provider.SharePoint')}</Option>
+          </Dropdown>
         </Toolbar>
         <main className={s.card}>
-          <PcfMount host={createMockContext(themes[theme], record)} />
+          <PcfMount
+            host={createMockContext(themes[theme], records[record].id, records[record].entity)}
+          />
         </main>
       </div>
     </FluentProvider>
