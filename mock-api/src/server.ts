@@ -8,6 +8,15 @@ import { Store, decodeBase64 } from './api/store';
 import { queryEntities, selectEntity } from './api/query';
 import { attributes, editableColumns, entitySets, visibleColumns } from './api/metadata';
 export function createApp(store: Store) {
+  const customAttributes = () =>
+    (store.snapshot.customColumns || []).map((column) => ({
+      LogicalName: column.name,
+      AttributeType: column.type,
+      DisplayName: { UserLocalizedLabel: { Label: column.label } },
+      RequiredLevel: { Value: 'None' },
+      IsValidForUpdate: true,
+      MaxLength: 4000,
+    }));
   const app = express(),
     api = express.Router();
   app.use(
@@ -26,6 +35,53 @@ export function createApp(store: Store) {
         .catch(next);
     };
   app.get('/__mock/health', (_req, res) => res.json({ ready: true, milestone: 'M1' }));
+  app.post(
+    '/__mock/columns',
+    route((req, res) => {
+      const body = payload(req.body);
+      const name = String(body.name || ''),
+        title = String(body.label || '').trim(),
+        type = String(body.type || 'String');
+      if (
+        !/^dms_[a-z][a-z0-9_]{0,59}$/.test(name) ||
+        !title ||
+        title.length > 100 ||
+        !['String', 'Memo', 'Integer', 'Decimal', 'Boolean', 'DateTime'].includes(type)
+      )
+        throw new ApiError(
+          400,
+          'InvalidColumn',
+          'Use a dms_ logical name, a label, and a supported column type.',
+        );
+      if (
+        name === 'dms_documentid' ||
+        [...attributes, ...customAttributes()].some((attribute) => attribute.LogicalName === name)
+      )
+        throw new ApiError(409, 'DuplicateColumn', 'This column already exists.');
+      (store.snapshot.customColumns ||= []).push({ name, label: title, type });
+      store.persist();
+      res.status(201).json(customAttributes().find((attribute) => attribute.LogicalName === name));
+    }),
+  );
+  app.delete(
+    '/__mock/columns/:name',
+    route((req, res) => {
+      const name = req.params.name;
+      if (!store.snapshot.customColumns?.some((column) => column.name === name))
+        throw new ApiError(404, 'NotFound', 'Custom column was not found.');
+      store.snapshot.customColumns = store.snapshot.customColumns.filter(
+        (column) => column.name !== name,
+      );
+      for (const document of store.snapshot.documents) {
+        if (name in document) {
+          delete document[name];
+          store.bump(document);
+        }
+      }
+      store.persist();
+      res.sendStatus(204);
+    }),
+  );
   app.get('/__mock/state', (_req, res) =>
     res.json({
       documents: store.snapshot.documents.length,
@@ -356,7 +412,10 @@ export function createApp(store: Store) {
             logicalName,
             enabled: !!entitySets[logicalName],
             visibleColumns,
-            editableColumns,
+            editableColumns: [
+              ...editableColumns,
+              ...customAttributes().map((attribute) => attribute.LogicalName),
+            ],
             maxFileSizeMb: 100,
             allowedExtensions: [],
             blockedExtensions: ['exe', 'bat', 'cmd', 'ps1', 'com', 'scr'],
@@ -391,7 +450,7 @@ export function createApp(store: Store) {
         LogicalName: logicalName,
         EntitySetName: set,
         ...(requestUrl(req).searchParams.get('$expand') === 'Attributes'
-          ? { Attributes: attributes }
+          ? { Attributes: [...attributes, ...customAttributes()] }
           : {}),
         '@odata.etag': 'W/"1"',
       });

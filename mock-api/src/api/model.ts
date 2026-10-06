@@ -8,6 +8,7 @@ export interface Migration {
   startedAt?: number;
 }
 export interface Snapshot {
+  customColumns?: { name: string; label: string; type: string }[];
   documents: Entity[];
   annotations: Entity[];
   migrations: Record<string, Migration>;

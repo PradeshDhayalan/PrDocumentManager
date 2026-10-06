@@ -38,6 +38,8 @@ export interface ClientConfig {
   migration: { state: string; processed: number; total: number };
 }
 export interface Query {
+  searchField?: string;
+  fields?: Entity;
   search: string;
   type: string;
   status: string;
@@ -205,7 +207,16 @@ export class DocumentClient {
       `dms_regardingid eq ${quote(this.host.recordId)}`,
       `dms_regardingtype eq ${quote(this.host.entityName)}`,
     ];
-    if (query.search.trim()) filters.push(`contains(dms_name,${quote(query.search.trim())})`);
+    const field = query.searchField || 'dms_name';
+    if (!/^[a-z_][a-z0-9_]*$/.test(field)) throw new Error('Invalid search column.');
+    if (query.search.trim()) filters.push(`contains(${field},${quote(query.search.trim())})`);
+    for (const [key, value] of Object.entries(query.fields || {})) {
+      if (!/^[a-z_][a-z0-9_]*$/.test(key)) throw new Error('Invalid filter column.');
+      if (value === null || value === '') continue;
+      filters.push(
+        typeof value === 'string' ? `contains(${key},${quote(value)})` : `${key} eq ${value}`,
+      );
+    }
     if (query.type) filters.push(`dms_documenttype eq ${Number(query.type)}`);
     if (query.status) filters.push(`dms_documentstatus eq ${Number(query.status)}`);
     const today = new Date().toISOString().slice(0, 10);
@@ -231,7 +242,7 @@ export class DocumentClient {
       next || `dms_documents?${parameters}`,
       {
         headers: {
-          Prefer: `odata.include-annotations="*",odata.maxpagesize=${Math.max(1, Math.min(250, this.host.pageSize || 50))}`,
+          Prefer: `odata.include-annotations="*",odata.maxpagesize=${Math.max(1, Math.min(250, this.host.pageSize || 10))}`,
         },
       },
       signal,

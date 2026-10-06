@@ -161,9 +161,9 @@ test('pages large libraries, escapes apostrophes in search, shares selection acr
   );
   await page.getByRole('button', { name: '1 selected', exact: true }).click();
   await page.goto('/?record=fabrikam');
-  await expect(page.getByText('50 of 1200 items', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Load more documents', exact: true }).click();
-  await expect(page.getByText('100 of 1200 items', { exact: true })).toBeVisible();
+  await expect(page.getByText('10 of 1200 items', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Next page', exact: true }).click();
+  await expect(page.getByText(/Page 2 of 120/)).toBeVisible();
   await search(page, "doesn't exist");
   await expect(page.getByText('No matching documents', { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 320, height: 800 });
@@ -296,6 +296,19 @@ test('JSON custom buttons confirm, invoke a registered form handler, persist cha
     ).toBeVisible();
     await page.keyboard.press('Escape');
     await page.setViewportSize({ width: 1440, height: 1050 });
+    await page.evaluate(() =>
+      localStorage.setItem(
+        'dms-pcf-configuration',
+        JSON.stringify({
+          pageSize: 50,
+          grid: {
+            filterColumns: ['dms_documenttype', 'dms_documentstatus'],
+            searchField: 'dms_name',
+            tileSize: 'medium',
+          },
+        }),
+      ),
+    );
     await page.goto('/?record=fabrikam');
     await expect(page.getByText('50 of 1200 items', { exact: true })).toBeVisible();
     await page

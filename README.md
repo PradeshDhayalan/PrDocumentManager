@@ -1,4 +1,7 @@
 # DMS Grid
+Phase 2 scope and the requirement to keep documentation current after every completed update are recorded in [Phase 2 requirements](docs/phase2-requirements.md).
+
+Grid options, custom columns, pagination and the Office thumbnail explanation are documented in [grid configuration](docs/grid-configuration.md). The local app provides a **PCF Configuration** panel; pagination defaults to 10 documents per page.
 React 16.14 + Fluent UI v9 virtual PCF document grid with a local mock Dataverse API and test harness. The approved visual prototype remains in `mockup/`. Implementation follows milestones from the uploaded brief; `CHANGELOG.md` records verified progress.
 
 ```sh

@@ -826,4 +826,5 @@
 
 <data name="action.reload"><value>Reload</value></data>
 
+<data name="input.gridConfiguration"><value>Grid configuration JSON (columns, filters, search field and tile size)</value></data>
 </root>

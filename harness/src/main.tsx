@@ -7,6 +7,7 @@ import { FluentProvider, webLightTheme, makeStyles, tokens } from '@fluentui/rea
 import { DmsGrid } from '../../control/DmsGrid';
 import { HostContext } from '../../control/DmsGrid/src/types/HostContext';
 import { createMockContext, createMockPcfContext } from './createMockContext';
+import { PcfConfiguration, LocalConfiguration, defaultConfiguration } from './PcfConfiguration';
 const useStyles = makeStyles({
   page: {
     minHeight: '100vh',
@@ -27,6 +28,15 @@ function PcfMount({ host }: { host: HostContext }) {
 }
 function App() {
   const s = useStyles();
+  const [configuration, setConfiguration] = React.useState<LocalConfiguration>(() => {
+    try {
+      return (
+        JSON.parse(localStorage.getItem('dms-pcf-configuration') || 'null') || defaultConfiguration
+      );
+    } catch {
+      return defaultConfiguration;
+    }
+  });
   // Sample records remain addressable for automated tests without harness chrome.
   const samples: Record<string, { id: string; entity: string }> = {
     contoso: { id: '11111111-1111-4111-8111-111111111111', entity: 'account' },
@@ -42,9 +52,19 @@ function App() {
     <FluentProvider theme={{ ...webLightTheme, fontFamilyBase: microsoftFontFamily }}>
       <div className={s.page}>
         <main className={s.control}>
+          <PcfConfiguration
+            host={createMockContext(webLightTheme, sample.id, sample.entity)}
+            value={configuration}
+            onApply={(value) => {
+              localStorage.setItem('dms-pcf-configuration', JSON.stringify(value));
+              setConfiguration(value);
+            }}
+          />
           <PcfMount
             host={{
               ...createMockContext(webLightTheme, sample.id, sample.entity),
+              pageSize: configuration.pageSize,
+              gridConfigurationJson: JSON.stringify(configuration.grid),
               customActionsJson,
               raiseCustomAction,
             }}

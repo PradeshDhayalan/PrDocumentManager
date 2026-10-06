@@ -1,4 +1,12 @@
 # Changelog
+## Phase 2 requirements and documentation
+
+Recorded the requested pagination, PCF configuration, custom columns, double-click editing, drag-and-drop overlay, tile pencil removal and Office thumbnail explanation in [Phase 2 requirements](docs/phase2-requirements.md). Added the requirement to update README and relevant supporting documentation with every completed change, and to record changes and validation in this changelog.
+
+The local implementation is described in [grid configuration](docs/grid-configuration.md). Harness/mock API builds, production PCF build (119 KiB), typecheck, ESLint and the three new browser tests passed. The custom-column API test verified metadata and typed values survive a store restart. Broader checks encountered missing `ffprobe`, an unavailable CDN icon and pre-existing formatting issues. Production tenant integration remains unverified.
+
+Validation for this documentation update: reviewed the requirements against the requested changes and checked the documentation links and whitespace. No application behavior changed.
+
 ## M0 — scaffold (complete)
 Official PAC virtual dataset scaffold, strict TypeScript workspace, shared resx, four-theme harness and check scripts.
 

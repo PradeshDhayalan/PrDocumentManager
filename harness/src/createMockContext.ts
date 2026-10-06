@@ -26,7 +26,7 @@ export function createMockContext(
     getString,
     showTitle: true,
     userId: 'aaaaaaaa-aaaa-4aaa-8aaa-000000000001',
-    pageSize: 50,
+    pageSize: 10,
     enableDragDrop: true,
     showDetailsPane: true,
   };
@@ -50,6 +50,7 @@ export function createMockPcfContext(
     resources: { getString: host.getString },
     parameters: {
       customActionsJson: { raw: host.customActionsJson || '' },
+      gridConfigurationJson: { raw: host.gridConfigurationJson || '' },
       documents: {
         records: {},
         sortedRecordIds: [],
@@ -63,7 +64,7 @@ export function createMockPcfContext(
       },
       enableDragDrop: { raw: true },
       defaultView: { raw: '0' },
-      pageSize: { raw: 50 },
+      pageSize: { raw: host.pageSize || 10 },
       showTitle: { raw: host.showTitle },
       showDetailsPane: { raw: true },
       enableTelemetry: { raw: false },

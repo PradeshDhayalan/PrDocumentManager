@@ -111,6 +111,23 @@ export class Store {
       dms_documentid: id,
     };
     validateDocument(row);
+    for (const column of this.snapshot.customColumns || []) {
+      const value = row[column.name];
+      if (value === undefined || value === null) continue;
+      const valid = ['String', 'Memo'].includes(column.type)
+        ? typeof value === 'string' && value.length <= 4000
+        : column.type === 'Boolean'
+          ? typeof value === 'boolean'
+          : column.type === 'DateTime'
+            ? typeof value === 'string' &&
+              /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+              !Number.isNaN(Date.parse(value))
+            : typeof value === 'number' &&
+              Number.isFinite(value) &&
+              (column.type !== 'Integer' || Number.isInteger(value));
+      if (!valid)
+        throw new ApiError(400, 'InvalidColumnValue', `Invalid value for ${column.label}.`);
+    }
     this.bump(row);
     if (existing) Object.assign(existing, row);
     else this.snapshot.documents.push(row);

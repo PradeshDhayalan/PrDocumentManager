@@ -2,6 +2,7 @@ import { RaiseCustomAction } from '../services/customActions';
 import { Theme } from '@fluentui/react-components';
 export interface HostContext {
   customActionsJson?: string;
+  gridConfigurationJson?: string;
   raiseCustomAction?: RaiseCustomAction;
   recordId: string;
   entityName: string;

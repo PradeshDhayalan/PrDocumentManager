@@ -4,6 +4,7 @@ import {
   defaultColumns,
   moveColumn,
 } from '../services/columns';
+import { parseGridConfiguration } from '../services/gridConfiguration';
 import { CustomAction, parseCustomActions, invokeCustomAction } from '../services/customActions';
 import { microsoftFontFamily } from '../services/fonts';
 import { useDragSelection } from '../components/useDragSelection';
@@ -78,11 +79,27 @@ import { MetadataFields } from '../components/MetadataFields';
 const useStyles = makeStyles({
   secondary: { color: tokens.colorNeutralForeground2, fontSize: '12px' },
   library: {
+    position: 'relative',
     fontFamily: tokens.fontFamilyBase,
     backgroundColor: tokens.colorNeutralBackground1,
     borderRadius: tokens.borderRadiusNone,
     overflow: 'hidden',
     minHeight: '730px',
+  },
+  dropOverlay: {
+    position: 'absolute',
+    inset: 0,
+    zIndex: 30,
+    backgroundColor: 'rgba(0, 55, 100, 0.78)',
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    gap: '16px',
+    pointerEvents: 'none',
+    border: '3px dashed #fff',
+    boxSizing: 'border-box',
   },
   expanded: {
     position: 'fixed',
@@ -260,6 +277,7 @@ const useStyles = makeStyles({
   },
 });
 const initialQuery: Query = {
+  fields: {},
   search: '',
   type: '',
   status: '',
@@ -270,6 +288,18 @@ const initialQuery: Query = {
 function Library({ host }: { host: HostContext }) {
   const s = useStyles(),
     t = createI18n(host.getString);
+  const gridSettings = React.useMemo(() => {
+    try {
+      return { value: parseGridConfiguration(host.gridConfigurationJson), error: '' };
+    } catch (e) {
+      return { value: parseGridConfiguration(), error: String(e) };
+    }
+  }, [host.gridConfigurationJson]);
+  const settings = gridSettings.value;
+  const [page, setPage] = React.useState(0);
+  const pageRoutes = React.useRef<(string | undefined)[]>([undefined]);
+  const [draggingFiles, setDraggingFiles] = React.useState(false);
+  const dragDepth = React.useRef(0);
   const client = React.useMemo(
     () => new DocumentClient(host),
     [host.clientUrl, host.recordId, host.entityName, host.pageSize, host.userId],
@@ -330,7 +360,10 @@ function Library({ host }: { host: HostContext }) {
     current = picked[0];
   const editAttributes = attributes.filter(
     (attribute) =>
-      attribute.IsValidForUpdate && config?.entity.editableColumns.includes(attribute.LogicalName),
+      attribute.IsValidForUpdate &&
+      (settings.editableColumns || config?.entity.editableColumns || []).includes(
+        attribute.LogicalName,
+      ),
   );
   const refresh = () => {
     setRevision((value) => value + 1);
@@ -361,7 +394,12 @@ function Library({ host }: { host: HostContext }) {
         .then(([settings, metadata]) => {
           setConfig(settings);
           setAttributes(metadata);
-          setColumns(configuredColumns(settings.entity.visibleColumns, metadata));
+          setColumns(
+            configuredColumns(
+              gridSettings.value.visibleColumns || settings.entity.visibleColumns,
+              metadata,
+            ),
+          );
           setColumnWidths({});
         })
         .catch((e) => {
@@ -383,16 +421,18 @@ function Library({ host }: { host: HostContext }) {
       actionController.current = undefined;
       window.removeEventListener('dms-config-changed', reload);
     };
-  }, [client, host.recordId]);
+  }, [client, host.recordId, gridSettings]);
   React.useEffect(() => {
     const controller = new AbortController();
     const generation = ++listGeneration.current;
     pageController.current?.abort();
+    pageRoutes.current = [undefined];
+    setPage(0);
     setNext(undefined);
     if (!host.recordId || !config?.entity.enabled) return;
     setLoading(true);
     void client
-      .list(query, controller.signal)
+      .list({ ...query, searchField: settings.searchField }, controller.signal)
       .then((result) => {
         if (generation === listGeneration.current) {
           setRows(result.rows);
@@ -409,7 +449,7 @@ function Library({ host }: { host: HostContext }) {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [client, host.recordId, config?.entity.enabled, query, revision]);
+  }, [client, host.recordId, config?.entity.enabled, query, revision, settings.searchField]);
   React.useEffect(() => () => pageController.current?.abort(), []);
   React.useEffect(() => {
     if (!expanded) return;
@@ -577,20 +617,24 @@ function Library({ host }: { host: HostContext }) {
     setError('');
     setDialog(kind);
   };
-  const loadMore = () => {
-    if (!next || loading) return;
+  const goToPage = (target: number) => {
+    if (loading || target < 0 || (target > page && !next)) return;
+    if (target > page) pageRoutes.current[target] = next;
     const controller = new AbortController();
     pageController.current = controller;
     const generation = listGeneration.current;
     setLoading(true);
     void client
-      .list(query, controller.signal, next)
+      .list(
+        { ...query, searchField: settings.searchField },
+        controller.signal,
+        pageRoutes.current[target],
+      )
       .then((result) => {
         if (generation !== listGeneration.current) return;
-        setRows((value) => [
-          ...value,
-          ...result.rows.filter((row) => !value.some((existing) => existing.id === row.id)),
-        ]);
+        setRows(result.rows);
+        setSelected([]);
+        setPage(target);
         setNext(result.next);
         setCount(result.count);
       })
@@ -665,6 +709,13 @@ function Library({ host }: { host: HostContext }) {
     </Badge>
   );
   const canManage = Boolean(host.recordId && config?.entity.enabled);
+  const editDocument = (row: DocumentRow) => {
+    setSelected([row.id]);
+    setEditValues({ ...row.raw });
+    setDirty({});
+    setError('');
+    setDialog('Edit details');
+  };
   if (!host.recordId)
     return (
       <section className={s.library} aria-label={t('documents')}>
@@ -683,19 +734,45 @@ function Library({ host }: { host: HostContext }) {
       tabIndex={-1}
       className={mergeClasses(s.library, expanded && s.expanded)}
       aria-label={t('documents')}
+      onDragEnter={(event) => {
+        if (
+          host.enableDragDrop !== false &&
+          canManage &&
+          !busy &&
+          event.dataTransfer.types.includes('Files')
+        ) {
+          event.preventDefault();
+          dragDepth.current++;
+          setDraggingFiles(true);
+        }
+      }}
+      onDragLeave={() => {
+        dragDepth.current = Math.max(0, dragDepth.current - 1);
+        if (!dragDepth.current) setDraggingFiles(false);
+      }}
       onDragOver={(event) => {
-        if (host.enableDragDrop !== false && canManage) {
+        if (
+          host.enableDragDrop !== false &&
+          canManage &&
+          event.dataTransfer.types.includes('Files')
+        ) {
           event.preventDefault();
           event.dataTransfer.dropEffect = busy ? 'none' : 'copy';
         }
       }}
       onDrop={(event) => {
+        dragDepth.current = 0;
+        setDraggingFiles(false);
         if (host.enableDragDrop !== false && canManage) {
           event.preventDefault();
           queueFiles(Array.from(event.dataTransfer.files));
         }
       }}
       onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          dragDepth.current = 0;
+          setDraggingFiles(false);
+        }
         const target = event.target as HTMLElement;
         if (target.closest('input,textarea,[role="combobox"],[contenteditable="true"]')) return;
         if (event.key === 'Escape') {
@@ -709,6 +786,20 @@ function Library({ host }: { host: HostContext }) {
         }
       }}
     >
+      {draggingFiles && (
+        <div className={s.dropOverlay} role="status">
+          <ArrowUploadRegular fontSize={48} />
+          <Text size={600} weight="semibold">
+            Drop documents to upload
+          </Text>
+          <Text>Release your files anywhere in this grid</Text>
+        </div>
+      )}
+      {gridSettings.error && (
+        <div role="alert" className={s.notice}>
+          {gridSettings.error}
+        </div>
+      )}
       {host.showTitle && (
         <div className={s.heading}>
           <h1 className={s.title} style={{ margin: 0 }}>
@@ -850,50 +941,78 @@ function Library({ host }: { host: HostContext }) {
       )}
       {filters && (
         <div className={s.filter}>
-          <Field label="Document type">
-            <Dropdown
-              aria-label="Filter document type"
-              value={
-                attributes
-                  .find((a) => a.LogicalName === 'dms_documenttype')
-                  ?.OptionSet?.Options?.find((o) => String(o.Value) === query.type)?.Label
-                  .UserLocalizedLabel.Label || 'All types'
-              }
-              selectedOptions={[query.type]}
-              onOptionSelect={(_, data) => changeQuery({ type: data.optionValue || '' })}
-            >
-              <Option value="">All types</Option>
-              {attributes
-                .find((a) => a.LogicalName === 'dms_documenttype')
-                ?.OptionSet?.Options?.map((option) => (
-                  <Option key={option.Value} value={String(option.Value)}>
-                    {option.Label.UserLocalizedLabel.Label}
-                  </Option>
-                ))}
-            </Dropdown>
-          </Field>
-          <Field label="Status">
-            <Dropdown
-              aria-label="Filter status"
-              value={
-                attributes
-                  .find((a) => a.LogicalName === 'dms_documentstatus')
-                  ?.OptionSet?.Options?.find((o) => String(o.Value) === query.status)?.Label
-                  .UserLocalizedLabel.Label || 'All statuses'
-              }
-              selectedOptions={[query.status]}
-              onOptionSelect={(_, data) => changeQuery({ status: data.optionValue || '' })}
-            >
-              <Option value="">All statuses</Option>
-              {attributes
-                .find((a) => a.LogicalName === 'dms_documentstatus')
-                ?.OptionSet?.Options?.map((option) => (
-                  <Option key={option.Value} value={String(option.Value)}>
-                    {option.Label.UserLocalizedLabel.Label}
-                  </Option>
-                ))}
-            </Dropdown>
-          </Field>
+          {attributes
+            .filter((attribute) => settings.filterColumns.includes(attribute.LogicalName))
+            .map((attribute) => {
+              const key = attribute.LogicalName;
+              const value = query.fields?.[key] ?? '';
+              const options = attribute.OptionSet?.Options;
+              const title = attribute.DisplayName.UserLocalizedLabel.Label;
+              return (
+                <Field key={key} label={title}>
+                  {options || attribute.AttributeType === 'Boolean' ? (
+                    <Dropdown
+                      aria-label={`Filter ${title}`}
+                      value={
+                        options?.find((option) => String(option.Value) === String(value))?.Label
+                          .UserLocalizedLabel.Label ||
+                        (value === true ? 'Yes' : value === false ? 'No' : 'All')
+                      }
+                      selectedOptions={[String(value)]}
+                      onOptionSelect={(_, data) =>
+                        changeQuery({
+                          fields: {
+                            ...query.fields,
+                            [key]: data.optionValue
+                              ? attribute.AttributeType === 'Boolean'
+                                ? data.optionValue === 'true'
+                                : Number(data.optionValue)
+                              : null,
+                          },
+                        })
+                      }
+                    >
+                      <Option value="">All</Option>
+                      {options ? (
+                        options.map((option) => (
+                          <Option key={option.Value} value={String(option.Value)}>
+                            {option.Label.UserLocalizedLabel.Label}
+                          </Option>
+                        ))
+                      ) : (
+                        <>
+                          <Option value="true">Yes</Option>
+                          <Option value="false">No</Option>
+                        </>
+                      )}
+                    </Dropdown>
+                  ) : (
+                    <Input
+                      aria-label={`Filter ${title}`}
+                      value={String(value)}
+                      type={
+                        ['Integer', 'Decimal', 'Money'].includes(attribute.AttributeType)
+                          ? 'number'
+                          : 'text'
+                      }
+                      onChange={(_, data) =>
+                        changeQuery({
+                          fields: {
+                            ...query.fields,
+                            [key]:
+                              data.value === ''
+                                ? null
+                                : ['Integer', 'Decimal', 'Money'].includes(attribute.AttributeType)
+                                  ? Number(data.value)
+                                  : data.value,
+                          },
+                        })
+                      }
+                    />
+                  )}
+                </Field>
+              );
+            })}
           <Button
             onClick={() => {
               setSearch('');
@@ -926,8 +1045,8 @@ function Library({ host }: { host: HostContext }) {
                 select={select}
                 host={host}
                 onPreview={(id) => {
-                  setSelected([id]);
-                  setDialog('Preview');
+                  const row = rows.find((item) => item.id === id);
+                  if (row) editDocument(row);
                 }}
                 onDetails={(id) => {
                   setSelected([id]);
@@ -980,6 +1099,9 @@ function Library({ host }: { host: HostContext }) {
               </div>
               <div
                 className={s.tiles}
+                style={{
+                  gridTemplateColumns: `repeat(auto-fill,minmax(min(100%,${{ small: 160, medium: 208, large: 288 }[settings.tileSize]}px),1fr))`,
+                }}
                 role="listbox"
                 aria-label="Documents"
                 aria-multiselectable="true"
@@ -994,8 +1116,7 @@ function Library({ host }: { host: HostContext }) {
                     className={mergeClasses(s.tile, selected.includes(row.id) && s.tileSelected)}
                     onClick={(event) => select(row.id, event)}
                     onDoubleClick={() => {
-                      setSelected([row.id]);
-                      setDialog('Preview');
+                      editDocument(row);
                     }}
                     onKeyDown={(event) => {
                       if (event.key === ' ') {
@@ -1008,7 +1129,10 @@ function Library({ host }: { host: HostContext }) {
                       }
                     }}
                   >
-                    <div className={s.tilePreview}>
+                    <div
+                      className={s.tilePreview}
+                      style={{ height: { small: 140, medium: 196, large: 260 }[settings.tileSize] }}
+                    >
                       <DocumentThumbnail
                         doc={row}
                         host={host}
@@ -1029,23 +1153,25 @@ function Library({ host }: { host: HostContext }) {
                         )
                       }
                     />
-                    <Button
-                      className={s.tileMore}
-                      appearance="subtle"
-                      aria-label={`Details for ${row.name}`}
-                      icon={<EditRegular />}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setSelected([row.id]);
-                        setDetails(true);
-                      }}
-                    />
                     <div className={s.tileBody}>
                       <div className={s.tileName} title={row.name}>
                         {row.name}
                       </div>
-                      <DocumentPerson name={row.by} />
-                      <Text className={s.secondary}>{row.modified}</Text>
+                      {columns
+                        .filter((id) => !['icon', 'name'].includes(id))
+                        .map((id) => {
+                          const column = availableColumns(attributes).find(
+                            (entry) => entry.id === id,
+                          );
+                          if (!column) return null;
+                          return id === 'by' ? (
+                            <DocumentPerson key={id} name={row.by} />
+                          ) : (
+                            <Text key={id} className={s.secondary}>
+                              {column.label}: {label(row.raw, column.field)}
+                            </Text>
+                          );
+                        })}
                     </div>
                   </div>
                 ))}
@@ -1069,9 +1195,29 @@ function Library({ host }: { host: HostContext }) {
               <Spinner label="Loading documents…" />
             </div>
           )}
-          {next && !loading && (
-            <div style={{ padding: 20, textAlign: 'center' }}>
-              <Button onClick={loadMore}>Load more documents</Button>
+          {canManage && (
+            <div
+              aria-label="Pagination"
+              style={{
+                padding: 20,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 16,
+              }}
+            >
+              <Button disabled={loading || page === 0} onClick={() => goToPage(page - 1)}>
+                Previous page
+              </Button>
+              <Text aria-live="polite">
+                Page {page + 1} of{' '}
+                {Math.max(1, Math.ceil(count / Math.max(1, Math.min(250, host.pageSize || 10))))} ·{' '}
+                {count ? page * (host.pageSize || 10) + 1 : 0}–
+                {page * (host.pageSize || 10) + rows.length} of {count}
+              </Text>
+              <Button disabled={loading || !next} onClick={() => goToPage(page + 1)}>
+                Next page
+              </Button>
             </div>
           )}
         </div>
@@ -1444,7 +1590,10 @@ function Library({ host }: { host: HostContext }) {
                   <Button
                     onClick={() => {
                       setColumns(
-                        configuredColumns(config?.entity.visibleColumns || [], attributes),
+                        configuredColumns(
+                          settings.visibleColumns || config?.entity.visibleColumns || [],
+                          attributes,
+                        ),
                       );
                       setColumnWidths({});
                     }}

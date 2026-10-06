@@ -3,11 +3,12 @@
  <control namespace="Dms" constructor="DmsGrid" version="0.1.0" display-name-key="control.name" description-key="control.description" control-type="virtual">
   <external-service-usage enabled="false"/>
   <property name="customActionsJson" display-name-key="input.customActions" description-key="input.customActions.description" of-type="Multiple" usage="input" required="false"/>
+  <property name="gridConfigurationJson" display-name-key="input.gridConfiguration" description-key="input.gridConfiguration" of-type="Multiple" usage="input" required="false"/>
   <event name="OnCustomAction" display-name-key="event.customAction" description-key="event.customAction.description"/>
   <data-set name="documents" display-name-key="documents"/>
   <property name="enableDragDrop" display-name-key="input.dragDrop" description-key="input.dragDrop" of-type="TwoOptions" usage="input" required="false" default-value="true"/>
   <property name="defaultView" display-name-key="input.defaultView" description-key="input.defaultView" of-type="Enum" usage="input" required="false" default-value="0"><value name="List" display-name-key="view.list">0</value><value name="Tiles" display-name-key="view.tiles">1</value></property>
-  <property name="pageSize" display-name-key="input.pageSize" description-key="input.pageSize" of-type="Whole.None" usage="input" required="false" default-value="50"/>
+  <property name="pageSize" display-name-key="input.pageSize" description-key="input.pageSize" of-type="Whole.None" usage="input" required="false" default-value="10"/>
   <property name="showTitle" display-name-key="input.showTitle" description-key="input.showTitle" of-type="TwoOptions" usage="input" required="false" default-value="true"/>
   <property name="showDetailsPane" display-name-key="input.showDetails" description-key="input.showDetails" of-type="TwoOptions" usage="input" required="false" default-value="true"/>
   <property name="enableTelemetry" display-name-key="input.telemetry" description-key="input.telemetry" of-type="TwoOptions" usage="input" required="false" default-value="false"/>
